@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest) {
     const access_token_csai_id = req.cookies.get("access_token_csai_id")?.value;
-    console.log("access_token_csai_id", access_token_csai_id);
-    // if (!access_token_csai_id) {
-    //     return NextResponse.redirect('https://createstudio.app/login');
-    // }
+    if (!access_token_csai_id) {
+        return NextResponse.redirect(`${process.env.NEXT_PUBLIC_API_URL}/login`);
+    }
+    return NextResponse.next();
 }
 
 // Protect ALL routes except static assets

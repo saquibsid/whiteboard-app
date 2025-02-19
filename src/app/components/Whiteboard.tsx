@@ -1,22 +1,17 @@
 "use client";
-import { Excalidraw, LiveCollaborationTrigger, MainMenu, WelcomeScreen, convertToExcalidrawElements } from "@excalidraw/excalidraw";
+import { Excalidraw, MainMenu, WelcomeScreen } from "@excalidraw/excalidraw";
 import { ExcalidrawLogo } from "./ExcalidrawLogo";
-import { useState } from "react";
-//import '@excalidraw/excalidraw/index.css';
-
+import Cookies from "js-cookie";
+import { useAuth } from "@/context/AuthContext";
 const WhiteBoard: React.FC = () => {
-  const [excalidrawAPI, setExcalidrawAPI] = useState(null);
-  const [isCollaborating, setIsCollaborating] = useState<boolean>(true);
-  console.info(convertToExcalidrawElements([{
-    type: "rectangle",
-    id: "rect-1",
-    width: 186.47265625,
-    height: 141.9765625,
-    x: 0,
-    y: 0,
-  },]));
+  const auth = useAuth();
+  if (!auth) return <p>Redirecting...</p>;
+  const { user, loading } = auth;
+  if (loading) return <p>Loading...</p>;
+  if (!user) return <p>Redirecting...</p>;
   return (
-    <div style={{ height: "43rem" }}>
+    
+    <div style={{ height: "100vh" }}>
       {/* <p style={{ fontSize: "16px" }}>
         Selecting the checkbox to see the collaborator count
       </p>
@@ -68,7 +63,8 @@ const WhiteBoard: React.FC = () => {
             <MainMenu.DefaultItems.Help />
             <MainMenu.DefaultItems.ChangeCanvasBackground />
           <MainMenu.Group title="Custom Links">
-            <MainMenu.ItemLink href="https://createstudio.app">Sign Up</MainMenu.ItemLink>
+            { user ? <MainMenu.ItemLink href={process.env.NEXT_PUBLIC_API_URL || "#"}>Dashboard</MainMenu.ItemLink>  : <MainMenu.ItemLink href={process.env.NEXT_PUBLIC_API_URL || "#"}>Sign up</MainMenu.ItemLink>}
+            
           </MainMenu.Group>
         </MainMenu>
         <WelcomeScreen>
@@ -83,6 +79,7 @@ const WhiteBoard: React.FC = () => {
               <ExcalidrawLogo withText />
             </WelcomeScreen.Center.Logo>
             <WelcomeScreen.Center.Heading>
+            { user && <h2>Welcome {user.name}!</h2>}
               All your data saved locally in your browser.
             </WelcomeScreen.Center.Heading>
             <WelcomeScreen.Center.Menu/>
